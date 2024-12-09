@@ -1,11 +1,5 @@
 'use client'
 
-declare global {
-  interface Window {
-    ethereum: any;
-  }
-}
-
 import { useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -34,8 +28,7 @@ export default function Header() {
         <div className="flex items-center space-x-2">
           <Wallet className="h-8 w-8" />
           <Link href="/">
-          <span className="text-2xl font-bold">TokenFactory</span>
-          </Link>
+          <span className="text-2xl font-bold">TokenExplorer</span></Link>
         </div>
         <div className="flex items-center space-x-4">
           <Link href="/create-token">
