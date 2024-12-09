@@ -1,6 +1,8 @@
 import { Inter } from 'next/font/google'
-import { ThemeProvider } from '../components/providers'
+import { ThemeProvider } from '@/components/providers'
 import './globals.css'
+import { ThirdwebProvider } from "thirdweb/react";
+
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -15,13 +17,16 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <ThirdwebProvider>
+<html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {children}
         </ThemeProvider>
       </body>
     </html>
+    </ThirdwebProvider>
+     
   )
 }
 
