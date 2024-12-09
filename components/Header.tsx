@@ -30,7 +30,7 @@ import { ConnectButton } from "thirdweb/react";
         <div className="flex items-center space-x-2">
           <Wallet className="h-8 w-8" />
           <Link href="/">
-          <span className="text-2xl font-bold">TokenFactory</span></Link>
+          <span className="text-2xl font-bold"></span></Link>
         </div>
         <div className="flex items-center space-x-4">
           <Link href="/create-token">
