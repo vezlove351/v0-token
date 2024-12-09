@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import { ethers } from 'ethers'
+import Image from 'next/image'
 import { Progress } from "@/components/ui/progress"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/table"
@@ -13,6 +14,7 @@ import { factoryAbi } from '@/utils/abis/factoryAbi'
 import { useToast } from "@/hooks/use-toast"
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import { useCallback } from 'react'
 
 const isValidUrl = (url: string): boolean => {
   try {
@@ -132,6 +134,7 @@ export default function TokenDetails() {
         const transfersData = await transfersResponse.json();
         setTransfers(transfersData.result || []);
 
+
       } catch (error) {
         console.error('Error fetching token details:', error)
         setError(error instanceof Error ? error.message : 'Failed to fetch token details. Please try again.')
@@ -152,7 +155,7 @@ export default function TokenDetails() {
 
   
 
-  const getCost = async () => {
+  const getCost = useCallback(async () => {
     if (!purchaseAmount || !tokenDetails) return;
 
     setIsCostLoading(true);
@@ -174,7 +177,7 @@ export default function TokenDetails() {
     } finally {
       setIsCostLoading(false);
     }
-  };
+  }, [purchaseAmount, tokenDetails, toast]);
 
   useEffect(() => {
     if (purchaseAmount) {
@@ -182,7 +185,7 @@ export default function TokenDetails() {
     } else {
       setCost('');
     }
-  }, [purchaseAmount]);
+  }, [purchaseAmount, getCost]);
 
   const handlePurchase = async () => {
     if (!purchaseAmount || !cost) return;
@@ -223,7 +226,7 @@ export default function TokenDetails() {
   };
 
   if (isLoading) {
-    return <p className="text-center">Loading token details...</p>
+    return <p className="text-center mt-24">Loading token details...</p>
   }
 
   if (error || !tokenDetails) {
@@ -234,10 +237,52 @@ export default function TokenDetails() {
     <>
       <Header />
       <div className="container mx-auto min-h-screen px-4 py-8 max-w-6xl">
-        <h1 className="text-3xl font-bold mb-8 text-center">{tokenDetails.name} Details</h1>
+        {/* <h1 className="text-3xl font-bold mb-8 text-center">{tokenDetails.name} Details</h1> */}
         <div className="grid md:grid-cols-2 gap-8">
-          <div className="space-y-8 max-w-6xl">
-            <TokenCard token={tokenDetails} />
+          <div className="space-y-8">
+          <Card>
+              <Image
+                src={tokenDetails.tokenImageUrl}
+                alt={tokenDetails.name}
+                width={500}
+                height={500}
+                className="p-8 rounded-md w-full h-full object-cover"
+              />
+            </Card>
+            <Card>
+  <CardHeader>
+    <CardTitle>Tokens Available for Sale</CardTitle>
+  </CardHeader>
+  <CardContent>
+    <Progress value={(tokenDetails.tokensAvailable / tokenDetails.totalTokens) * 100} className="mb-2" />
+    <p className="text-sm">
+      {tokenDetails.fundingRaised.toLocaleString()} / {tokenDetails.totalTokens.toLocaleString()}
+    </p>
+   
+  </CardContent>
+</Card>
+           
+
+            
+          </div>
+          <div className="space-y-8">
+          <TokenCard token={tokenDetails} />
+
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Bonding Curve Progress</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Progress value={(tokenDetails.bondingCurveProgress / tokenDetails.bondingCurveMax) * 100} className="mb-2" />
+                <p className="text-sm mb-4">
+                  {tokenDetails.fundingRaised} / {tokenDetails.bondingCurveMax} ETH
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  When the market cap reaches {tokenDetails.bondingCurveMax} ETH, all the liquidity from the bonding curve will be deposited into Uniswap, and the LP tokens will be burned. Progression increases as the price goes up.
+                </p>
+              </CardContent>
+            </Card>
             <Card>
               <CardHeader>
                 <CardTitle>Buy Tokens</CardTitle>
@@ -257,39 +302,12 @@ export default function TokenDetails() {
                   ) : null}
                   <Button 
                     onClick={handlePurchase} 
-                    className="w-full"
+                    className="w-full p-6"
                     disabled={!purchaseAmount || !cost}
                   >
                     Purchase
                   </Button>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
-          <div className="space-y-8">
-            <Card>
-              <CardHeader>
-                <CardTitle>Bonding Curve Progress</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Progress value={(tokenDetails.bondingCurveProgress / tokenDetails.bondingCurveMax) * 100} className="mb-2" />
-                <p className="text-sm mb-4">
-                  {tokenDetails.bondingCurveProgress} / {tokenDetails.bondingCurveMax} ETH
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  When the market cap reaches {tokenDetails.bondingCurveMax} ETH, all the liquidity from the bonding curve will be deposited into Uniswap, and the LP tokens will be burned. Progression increases as the price goes up.
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle>Tokens Available for Sale</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Progress value={(tokenDetails.tokensAvailable / tokenDetails.totalTokens) * 100} className="mb-2" />
-                <p className="text-sm">
-                  {tokenDetails.tokensAvailable.toLocaleString()} / {tokenDetails.totalTokens.toLocaleString()}
-                </p>
               </CardContent>
             </Card>
           </div>
@@ -332,7 +350,7 @@ export default function TokenDetails() {
                   <TableRow>
                     <TableHead>From Address</TableHead>
                     <TableHead>To Address</TableHead>
-                    <TableHead>Value (ETH)</TableHead>
+                    <TableHead>Value {tokenDetails.symbol}</TableHead>
                     <TableHead>Transaction Hash</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -364,4 +382,5 @@ export default function TokenDetails() {
     </>
   )
 }
+
 

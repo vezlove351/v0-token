@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import { createMemeToken } from '@/utils/contract'
 import { useToast } from "@/hooks/use-toast"
 
+
 export default function TokenCreationForm() {
   const [formData, setFormData] = useState({
     name: '',

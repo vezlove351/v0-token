@@ -1,13 +1,15 @@
 'use client'
 
-import { useState } from 'react'
+// import { useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Wallet } from 'lucide-react'
 import { ThemeToggle } from './ThemeToggle'
+import { client } from "@/app/client";
+import { ConnectButton } from "thirdweb/react";
 
-export default function Header() {
-  const [isConnected, setIsConnected] = useState(false)
+ export default function Header() {
+ /* const [isConnected, setIsConnected] = useState(false)
 
   const handleConnect = async () => {
     if (typeof window.ethereum !== 'undefined') {
@@ -20,7 +22,7 @@ export default function Header() {
     } else {
       alert('Please install MetaMask!')
     }
-  }
+  } */
 
   return (
     <header className="bg-background border-b">
@@ -28,16 +30,18 @@ export default function Header() {
         <div className="flex items-center space-x-2">
           <Wallet className="h-8 w-8" />
           <Link href="/">
-          <span className="text-2xl font-bold">TokenExplorer</span></Link>
+          <span className="text-2xl font-bold">TokenFactory</span></Link>
         </div>
         <div className="flex items-center space-x-4">
           <Link href="/create-token">
             <Button variant="ghost">Create Token</Button>
           </Link>
           <ThemeToggle />
-          <Button onClick={handleConnect} variant={isConnected ? "outline" : "default"}>
+        {/*   <Button onClick={handleConnect} variant={isConnected ? "outline" : "default"}>
             {isConnected ? 'Connected' : 'Connect Wallet'}
-          </Button>
+          </Button> */}
+           <ConnectButton client={client} 
+            />
         </div>
       </div>
     </header>

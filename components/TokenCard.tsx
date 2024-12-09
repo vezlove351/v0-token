@@ -30,7 +30,9 @@ export default function TokenCard({ token }: { token: MemeToken }) {
              <p className="text-sm text-muted-foreground">{token.symbol}</p>
            </div>
          </div>
-         <p className="text-sm mb-4">{token.description}</p>
+         <p className="text-sm mb-4 break-words line-clamp-2 hover:line-clamp-none">
+  {token.description}
+</p>
          <p className="text-sm mb-2">
          <span className="font-semibold">Token Address:</span> {`${token.tokenAddress.slice(0, 6)}...${token.tokenAddress.slice(-4)}`}
          </p>
